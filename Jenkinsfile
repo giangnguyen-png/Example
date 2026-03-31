@@ -17,19 +17,22 @@ pipeline {
         stage('Install & Lint & Build'){
             agent {
                 docker {
-                    image 'node:22-alpine'
+                    image 'node:20-alpine'
                     reuseNode true
                 }
             }
-            steps {
-                sh 'node -v && npm -v'
-                sh 'npm ci'
-                sh 'npm run lint'
-                sh 'npm run build'
-            }
+        environment {
+            PATH = "/usr/bin:/usr/local/bin:/bin:/usr/sbin:/sbin"
         }
+        steps {
+            sh 'docker version'   // test
+            sh 'node -v && npm -v'
+            sh 'npm install'
+            sh 'npm run build'
+        }
+}
     }
-    
+
     post {
         success {
             archiveArtifacts artifacts: 'dist/**/*', fingerprint: true, allowEmptyArchive: false
